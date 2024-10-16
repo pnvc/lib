@@ -32,6 +32,10 @@ ifdef LIBGETFD
 	lib += getfd
 endif
 
+ifdef LIBCPFIL
+	lib += cpfil
+endif
+
 ifneq ($(lib),)
 .PHONY: all make_lib
 
@@ -48,22 +52,24 @@ all:
 	@echo no libs, try make help
 endif
 
-.PHONY: clean help names info_MSG info_GETFD
+.PHONY: clean help names info_MSG info_GETFD info_CPFIL
 clean:
 	-$(MAKE) -C msg clean
 	-$(MAKE) -C getfd clean
+	-$(MAKE) -C cpfil clean
 	-@rm $(OBJ)
 
 help:
 	@echo clean all: make clean
 	@echo make lib: make LIBname=1
 	@echo make libs: make LIBname1=1 LIBname2=1
-	@echo make libs with inline: make LIBINLINE=1 LIBname...=1
+	@printf "make libs with inline (where possible): \
+make LIBINLINE=1 LIBname...=1\n"
 	@echo check lib names: make names
 	@echo info about lib: make info_name
 
 names:
-	@echo available lib names: MSG, GETFD
+	@echo available lib names: MSG, GETFD, CPFIL
 
 info_MSG:
 	@echo lib MSG contains write functions with simple usage:
@@ -84,3 +90,6 @@ open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0664)\n"
 	@printf "\t_w = write, _r = read, _a = append\n"
 	@printf "\tread include/getfd.h to see available funcs \
 (not many, just main)\n"
+
+info_CPFIL:
+	@echo "lib CPFIL contains one function - cpfil(dest, src) - copy file"
