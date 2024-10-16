@@ -1,5 +1,5 @@
-#ifndef MES_H_SENTRY
-#define MES_H_SENTRY 1
+#ifndef MSG_H_SENTRY
+#define MSG_H_SENTRY 1
 
 #include <unistd.h>
 
@@ -16,4 +16,4 @@ ssize_t msgerr(const char *, ssize_t);
 ssize_t rmsg(char *, ssize_t);
 #endif /* LIBINLINE */
 
-#endif /* MES_H_SENTRY */
+#endif /* MSG_H_SENTRY */
