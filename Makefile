@@ -43,8 +43,7 @@ all: make_lib
 	$(LD) $(LDFLAGS) $(OBJ) $(shell ls */*.o)
 
 make_lib: $(lib)
-	@echo $(CCFLAGS)
-	for dir in $^ ; do \
+	@for dir in $^ ; do \
 		$(MAKE) -C $$dir ; \
 	done	
 else
