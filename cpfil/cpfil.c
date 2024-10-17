@@ -5,7 +5,7 @@
 #include <errno.h>
 #include <sys/user.h>
 
-enum cpfilmmap_err {
+typedef enum {
 	ERR_OK = 0,
 	ERR_DEST,
 	ERR_SRC,
@@ -15,12 +15,12 @@ enum cpfilmmap_err {
 	ERR_MMAP_SRC,
 	ERR_MSGFD,
 	ERR_COPY_LEN
-};
+} cpfilmmap_err;
 
 #define PTR_TO_PAGE_MUL(x) (void*)((unsigned long)x >> PAGE_SHIFT << PAGE_SHIFT)
 int cpfilmmap(const char *dest, const char *src)
 {
-	enum cpfilmmap_err err = ERR_OK;
+	cpfilmmap_err err = ERR_OK;
 	int fd_dest = 0, fd_src = 0;
 	char *mmap_src = (char *)0;
 	struct stat stat_src;
@@ -68,6 +68,7 @@ int cpfilmmap(const char *dest, const char *src)
 	close(fd_src);
 
 	errno = saved_errno;
-	return err;
+
+	return (int)err;
 }
 #undef PTR_TO_PAGE_MUL

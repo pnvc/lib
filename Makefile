@@ -13,9 +13,9 @@
 
 CC ?= gcc
 CCFLAGS :=
-LD ?= ld
-LDFLAGS := -r -o
-OBJ := out.o
+AR := ar
+ARFLAGS := rcs
+STATIC_LIB := libout.a
 
 ifdef LIBGETFD
 	lib += getfd
@@ -24,6 +24,12 @@ endif
 ifdef LIBCPFIL
 	lib := $(patsubst %getfd,%,$(lib))
 	lib += cpfil getfd
+endif
+
+ifdef LIBCPDIR
+	lib := $(patsubst %getfd,%,$(lib))
+	lib := $(patsubst %cpfil,%,$(lib))
+	lib += cpfil getfd cpdir
 endif
 
 ifdef LIBMSG
@@ -41,23 +47,24 @@ ifneq ($(lib),)
 .PHONY: all make_lib
 
 all: make_lib
-	$(LD) $(LDFLAGS) $(OBJ) $(shell ls */*.o)
+	$(AR) $(ARFLAGS) $(STATIC_LIB) $(shell ls */*.o)
 
 make_lib: $(lib)
 	@for dir in $^ ; do \
 		$(MAKE) -C $$dir ; \
-	done	
+	done
 else
 all:
 	@echo no libs, try make help
 endif
 
-.PHONY: clean help names info_MSG info_GETFD info_CPFIL
+.PHONY: clean help names info_MSG info_GETFD info_CPFIL info_CPDIR
 clean:
 	-$(MAKE) -C msg clean
 	-$(MAKE) -C getfd clean
 	-$(MAKE) -C cpfil clean
-	-@rm $(OBJ)
+	-$(MAKE) -C cpdir clean
+	-rm $(STATIC_LIB)
 
 help:
 	@echo clean all: make clean
@@ -69,7 +76,7 @@ make LIBINLINE=1 LIBname...=1\n"
 	@echo info about lib: make info_name
 
 names:
-	@echo available lib names: MSG, GETFD, CPFIL
+	@echo available lib names: MSG, GETFD, CPFIL, CPDIR
 
 info_MSG:
 	@echo lib MSG contains write functions with simple usage:
@@ -92,4 +99,9 @@ open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0664)\n"
 (not many, just main)\n"
 
 info_CPFIL:
-	@echo "lib CPFIL contains one function - cpfil(dest, src) - copy file"
+	@echo "lib CPFIL contains one function - cpfilmmap(dest, src) - \
+copy file"
+
+info_CPDIR:
+	@echo "lib CPDIR contains one function - cpdirmmap(dest, src) - \
+copy dir recursive"
