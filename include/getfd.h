@@ -34,13 +34,13 @@ static inline int getfdat_a(int dfd, const char *n)
 { return openat(dfd, n, O_APPEND); }
 
 static inline int getfdat_cw(int dfd, const char *n)
-{ return ts_creat_ignore_umask(dfd, n, O_CREAT | O_WRONLY, 436); }
+{ return ts_creat_at_ignore_umask(dfd, n, O_CREAT | O_WRONLY, 436); }
 
 static inline int getfdat_ca(int dfd, const char *n)
-{ return ts_creat_ignore_umask(dfd, n, O_CREAT | O_APPEND, 436); }
+{ return ts_creat_at_ignore_umask(dfd, n, O_CREAT | O_APPEND, 436); }
 
 static inline int getfdat_cwt(int dfd, const char *n)
-{ return ts_creat_ignore_umask(dfd, n, O_CREAT | O_WRONLY | O_TRUNC, 436); }
+{ return ts_creat_at_ignore_umask(dfd, n, O_CREAT | O_WRONLY | O_TRUNC, 436); }
 #else
 int getfd_w(const char *);
 int getfd_r(const char *);

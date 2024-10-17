@@ -17,24 +17,25 @@ LD ?= ld
 LDFLAGS := -r -o
 OBJ := out.o
 
-ifdef LIBINLINE
-	override undefine LIBGETFD
-	CCFLAGS := -DLIBINLINE
-endif
-CCFLAGS += -I../include -c -o
-export
-
-ifdef LIBMSG
-	lib += msg
-endif
-
 ifdef LIBGETFD
 	lib += getfd
 endif
 
 ifdef LIBCPFIL
-	lib += cpfil
+	lib := $(patsubst %getfd,%,$(lib))
+	lib += cpfil getfd
 endif
+
+ifdef LIBMSG
+	lib += msg
+endif
+
+ifdef LIBINLINE
+	CCFLAGS := -DLIBINLINE
+	lib := $(patsubst %getfd,%,$(lib))
+endif
+CCFLAGS += -I../include -c -o
+export
 
 ifneq ($(lib),)
 .PHONY: all make_lib
