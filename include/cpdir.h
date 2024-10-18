@@ -16,6 +16,7 @@ typedef enum {
 	CPDIR_ERR_CPFILMMAP,
 	CPDIR_ERR_ERRS_PTR,
 	CPDIR_ERR_LSTAT,
+	CPDIR_ERR_CHOWN
 } cpdir_err;
 
 struct s_cpdir_err {

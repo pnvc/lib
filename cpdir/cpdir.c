@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 #include <ftw.h>
 #include <errno.h>
+#include <unistd.h>
 
 #define STATIC_DEST_LEN 256
 
@@ -14,7 +15,8 @@ static struct s_cpdir_err static_errs;
 static int nftw_cb(const char *path, const struct stat *stat,
 		int type, struct FTW *ftw);
 
-static int ts_creat_dir_ignore_umask(const char *path, mode_t mode);
+static int ts_creat_dir_ignore_umask(const char *path, mode_t mode, uid_t u,
+		gid_t g);
 
 static int prepare_static_vars(const char *dest, const char *src);
 
@@ -66,7 +68,7 @@ static int nftw_cb(const char *path, const struct stat *stat,
 	switch (type) {
 	case FTW_D:
 		errdir = ts_creat_dir_ignore_umask(static_dest,
-				stat->st_mode);
+				stat->st_mode, stat->st_uid, stat->st_gid);
 		break;
 	case FTW_F:
 		errfil = cpfilmmap(static_dest, path);
@@ -80,13 +82,17 @@ static int nftw_cb(const char *path, const struct stat *stat,
 	return errdir;
 }
 
-static int ts_creat_dir_ignore_umask(const char *path, mode_t mode)
+static int ts_creat_dir_ignore_umask(const char *path, mode_t mode, uid_t u,
+		gid_t g)
 {
 	if (mkdir(path, mode) < 0 && errno != EEXIST)
 		return CPDIR_ERR_MKDIR;
 
 	if (chmod(path, mode) < 0)
 		return CPDIR_ERR_CHMOD;
+
+	if (chown(path, u, g) < 0)
+		return CPDIR_ERR_CHOWN;
 
 	return CPDIR_ERR_OK;
 }

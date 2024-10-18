@@ -27,6 +27,9 @@ static inline int getfd_cwt(const char *n)
 static inline int getfd_cwtm(const char *n, mode_t mode)
 { return ts_creat_ignore_umask(n, O_CREAT | O_WRONLY | O_TRUNC, mode); }
 
+static inline int getfd_cwtmug(const char *n, struct stat *s)
+{ return ts_creat_ignore_umask_ug(n, O_CREAT | O_WRONLY | O_TRUNC, s); }
+
 static inline int getfdat_w(int dfd, const char *n)
 { return openat(dfd, n, O_WRONLY); }
 
@@ -52,12 +55,13 @@ int getfd_cw(const char *);
 int getfd_ca(const char *);
 int getfd_cwt(const char *);
 int getfd_cwtm(const char *, mode_t);
+int getfd_cwtmug(const char *, struct stat *);
 int getfdat_w(int, const char *);
 int getfdat_r(int, const char *);
 int getfdat_a(int, const char *);
 int getfdat_cw(int, const char *);
-int getfdat_ca(int, const char *);
 int getfdat_cwt(int, const char *);
+int getfdat_ca(int, const char *);
 #endif /* LIBINLINE */
 
 #endif /* GETFD_H_SENTRY */

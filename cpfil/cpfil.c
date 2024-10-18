@@ -28,7 +28,7 @@ int cpfilmmap(const char *dest, const char *src)
 		return CPFIL_ERR_STAT_SRC;
 	}
 
-	fd_dest = getfd_cwtm(dest, stat_src.st_mode);
+	fd_dest = getfd_cwtmug(dest, &stat_src);
 	if (fd_dest < 0) {
 		close(fd_src);
 		return CPFIL_ERR_FD_DEST;

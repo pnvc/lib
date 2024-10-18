@@ -22,6 +22,9 @@ int getfd_cwt(const char *n)
 int getfd_cwtm(const char *n, mode_t mode)
 { return ts_creat_ignore_umask(n, O_CREAT | O_WRONLY | O_TRUNC, mode); }
 
+int getfd_cwtmug(const char *n, struct stat *s)
+{ return ts_creat_ignore_umask_ug(n, O_CREAT | O_WRONLY | O_TRUNC, s); }
+
 int getfdat_w(int dfd, const char *n)
 { return openat(dfd, n, O_WRONLY); }
 
