@@ -24,6 +24,9 @@ static inline int getfd_ca(const char *n)
 static inline int getfd_cwt(const char *n)
 { return ts_creat_ignore_umask(n, O_CREAT | O_WRONLY | O_TRUNC, 436); }
 
+static inline int getfd_cwtm(const char *n, mode_t mode)
+{ return ts_creat_ignore_umask(n, O_CREAT | O_WRONLY | O_TRUNC, mode); }
+
 static inline int getfdat_w(int dfd, const char *n)
 { return openat(dfd, n, O_WRONLY); }
 
@@ -48,6 +51,7 @@ int getfd_a(const char *);
 int getfd_cw(const char *);
 int getfd_ca(const char *);
 int getfd_cwt(const char *);
+int getfd_cwtm(const char *, mode_t);
 int getfdat_w(int, const char *);
 int getfdat_r(int, const char *);
 int getfdat_a(int, const char *);

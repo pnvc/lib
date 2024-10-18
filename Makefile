@@ -21,26 +21,28 @@ ifdef LIBGETFD
 	lib += getfd
 endif
 
+ifdef LIBMSG
+	lib += msg
+endif
+
 ifdef LIBCPFIL
 	lib := $(patsubst %getfd,%,$(lib))
-	lib += cpfil getfd
+	lib := $(patsubst $msg,%,$(lib))
+	lib += cpfil getfd msg
 endif
 
 ifdef LIBCPDIR
 	lib := $(patsubst %getfd,%,$(lib))
 	lib := $(patsubst %cpfil,%,$(lib))
-	lib += cpfil getfd cpdir
-endif
-
-ifdef LIBMSG
-	lib += msg
+	lib := $(patsubst $msg,%,$(lib))
+	lib += cpfil getfd cpdir msg
 endif
 
 ifdef LIBINLINE
 	CCFLAGS := -DLIBINLINE
 	lib := $(patsubst %getfd,%,$(lib))
 endif
-CCFLAGS += -I../include -c -o
+CCFLAGS += -g -I../include -c -o
 export
 
 ifneq ($(lib),)
