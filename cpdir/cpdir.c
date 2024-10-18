@@ -58,7 +58,6 @@ static int nftw_cb(const char *path, const struct stat *stat,
 {
 	cpdir_err errdir = CPDIR_ERR_OK;
 	cpfil_err errfil = CPFIL_ERR_OK;
-	int errval;
 	char *d;
 	const char *s;
 
@@ -68,24 +67,18 @@ static int nftw_cb(const char *path, const struct stat *stat,
 		*d++ = *s++;
 	*d = 0;
 
-	if (type == FTW_D) {
-		if (d - static_dest != static_dest_len) {
-			errdir = ts_creat_dir_ignore_umask(static_dest,
-					stat->st_mode);
-
-			if (errdir) {
-				if (errdir == CPDIR_ERR_MKDIR)
-					errdir = CPDIR_ERR_MKDIR_CB;
-				else
-					errdir = CPDIR_ERR_CHMOD_CB;
-			}
-		}
-	} else if (type == FTW_F /*&& (stat->st_mode & S_IFMT) == S_IFREG*/) {
+	switch (type) {
+	case FTW_D:
+		errdir = ts_creat_dir_ignore_umask(static_dest,
+				stat->st_mode);
+		break;
+	case FTW_F:
 		errfil = cpfilmmap(static_dest, path);
 		if (errfil) {
 			errdir = CPDIR_ERR_CPFILMMAP;
 			static_errs.errfil = errfil;
 		}
+		break;
 	}
 
 	return errdir;
