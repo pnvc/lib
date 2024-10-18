@@ -42,7 +42,7 @@ ifdef LIBINLINE
 	CCFLAGS := -DLIBINLINE
 	lib := $(patsubst %getfd,%,$(lib))
 endif
-CCFLAGS += -g -I../include -c -o
+CCFLAGS += -I../include -c -o
 export
 
 ifneq ($(lib),)
