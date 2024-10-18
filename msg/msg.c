@@ -5,7 +5,7 @@ ssize_t msgfd(int fd, const char *m, ssize_t s)
 	size_t i = 0;
 	ssize_t wr, wr2 = 0;
 
-	if (!m || !m[i])
+	if (!m)
 		return 0;
 
 	if (s > 0) {
