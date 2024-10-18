@@ -1,4 +1,4 @@
-#define _XOPEN_SOURCE 700
+#define _XOPEN_SOURCE 500
 #include <cpdir.h>
 #include <sys/stat.h>
 #include <ftw.h>
