@@ -5,7 +5,6 @@
 #include <errno.h>
 #include <sys/user.h>
 
-#define PTR_TO_PAGE_MUL(x) (void*)((unsigned long)x >> PAGE_SHIFT << PAGE_SHIFT)
 int cpfilmmap(const char *dest, const char *src)
 {
 	cpfil_err err = CPFIL_ERR_OK;
@@ -51,7 +50,9 @@ int cpfilmmap(const char *dest, const char *src)
 		} else if (msg_ret < stat_src.st_size)
 			err = CPFIL_ERR_COPY_LEN;
 
-		munmap(PTR_TO_PAGE_MUL(mmap_src), stat_src.st_size);
+		munmap((void *)((unsigned long)mmap_src & 
+					~(sysconf(_SC_PAGE_SIZE) - 1)),
+				stat_src.st_size);
 	}
 
 	close(fd_dest);
@@ -62,4 +63,3 @@ int cpfilmmap(const char *dest, const char *src)
 
 	return (int)err;
 }
-#undef PTR_TO_PAGE_MUL
