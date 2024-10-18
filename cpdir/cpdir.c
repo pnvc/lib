@@ -38,10 +38,6 @@ int cpdirmmap(const char *dest, const char *src, mode_t mode,
 	if (err)
 		goto end;
 
-	err = ts_creat_dir_ignore_umask(static_dest, mode);
-	if (err)
-		goto end;
-
 	err = nftw(src, nftw_cb, 0, 0);
 
 end:
