@@ -14,5 +14,6 @@ typedef enum {
 } cpfil_err;
 
 int cpfilmmap(const char *dest, const char *src);
+int cpfil(const char *dest, const char *src);
 
 #endif /* CPFIL_H_SENTRY */
