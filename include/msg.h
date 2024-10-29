@@ -3,8 +3,8 @@
 
 #include "err.h"
 
-ssize_t msgfd(int fd, const char *buf, ssize_t buf_size, S_ERR);
-ssize_t rmsgfd(int fd, char *buf, ssize_t bus_size, S_ERR);
+ssize_t msgfd(int fd, const char *buf, ssize_t buf_size, struct s_err *err);
+ssize_t rmsgfd(int fd, char *buf, ssize_t bus_size, struct s_err *err);
 
 /*
 #ifdef LIBINLINE

@@ -1,11 +1,10 @@
 #ifndef ERR_H_SENTRY
 #define ERR_H_SENTRY
 
-/* x32 bit system */
-
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 typedef enum {
 	ERR_OK = 0,
@@ -16,46 +15,55 @@ typedef enum {
 struct s_err {
 	int Errno;
 	e_err err;
-	int reserved;
 };
 
-#define SAVE_ERRNO() err->Errno = errno
+#define SET_ERR_TYPE(x)	err->err = x
+#define SAVE_ERRNO	err->Errno = errno
+#define NULL_ERRNO	err->Errno = 0
 
-/* this means that exit() anyway */
-static inline void set_err_crit(struct s_err *err)
-{ SAVE_ERRNO(); err->err = ERR_CRIT; }
+#define SET_ERR_CRIT	SET_ERR_TYPE(ERR_CRIT);	SAVE_ERRNO
+#define SET_ERR		SET_ERR_TYPE(ERR);	SAVE_ERRNO
+#define SET_ERR_OKE	SET_ERR_TYPE(ERR_OK);	SAVE_ERRNO
+#define SET_ERR_OK	SET_ERR_TYPE(ERR_OK);	NULL_ERRNO
 
-static inline void set_err_(struct s_err *err)
-{ SAVE_ERRNO(); err->err = ERR; 	}
-
-static inline void set_err_ok(struct s_err *err)
-{ err->Errno = 0; err->err = ERR_OK; }
-
-#undef SAVE_ERRNO
-
-/* runtime init/free functions for struct s_err */
-#define INIT_ERR() struct s_err *err = malloc(sizeof(struct s_err)); \
-			if (!err) \
+/* help init and zeroed */
+#define INIT_ERR 	struct s_err *err = malloc(sizeof(*err)); \
+			if (err == NULL) { \
+				errno = ENOMEM; \
+				perror("INIT_ERR"); \
 				exit(ENOMEM); \
-			memset(err, 0, sizeof(struct s_err));
-#define FREE_ERR() free(err);
+			} \
+			memset(err, 0, sizeof(*err))
+#define FREE_ERR	free(err)
 
-/* help macroses that will set struct err (SSE) */
-#define SET_CRIT()	set_err_crit(err)
-#define SET_ERR()	set_err_(err)
-#define SET_OK()	set_err_ok(err)
+/* help macroses check ERR_CRIT and ERR */
+#define IS_CRIT		(err->err == ERR_CRIT)
+#define IS_ERR		(err->err == ERR)
+#define IS_OK		(err->err == ERR_OK)
 
-/* help macroses check crit or some error */
-#define IS_CRIT()	(err->err == ERR_CRIT)
-#define IS_ERR()	(err->err == ERR)
-//#define IS_ERR_NERRNO()	(err->err == ERR && !err->Errno);
-#define IS_OK()		(err->err == ERR_OK)
+#define ERRNO 		err->Errno
 
-#define S_ERR struct s_err *err
+/* macros perror and exit if ERR_CRIT, else if ERR - your handle {...} */
+#define IFCRIEXI_ELSERR \
+	if (IS_CRIT) { \
+		errno = ERRNO; \
+		FREE_ERR; \
+		perror("Err is crit, exit"); \
+		exit(errno); \
+	} else if (IS_ERR)
 
-#define IFCRIT_EXIT_ELSERR() if (IS_CRIT()) { \
-	exit(err->Errno); \
-	} else if (IS_ERR())
+#define IFERREXI \
+	do { \
+	if (IS_ERR || IS_CRIT) { \
+		errno = ERRNO; \
+		FREE_ERR; \
+		perror("Err, exit"); \
+		exit(errno); \
+	} \
+	} while (0) \
+
+#define IFOK_ERRNO \
+	if (IS_OK && ERRNO)
 
 
-#endif
+#endif /* ERR_H_SENTRY */
